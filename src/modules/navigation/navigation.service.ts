@@ -1,18 +1,22 @@
 import { Injectable } from '@nitrostack/core';
+import { Printer, Room } from '../../data/data.service.js';
 import { RoomRepository } from '../../data/room.repository.js';
 import { EquipmentRepository } from '../../data/equipment.repository.js';
 
-export interface ClassroomResult {
+// ─── Return Types ─────────────────────────────────────────────────────────────
+
+export interface ClassroomLocationResult {
     courseId: string;
-    building: string;
-    buildingName: string;
-    room: string;
-    floor: number;
-    landmark: string;
     found: boolean;
+    building?: string;
+    buildingName?: string;
+    room?: string;
+    floor?: number;
+    landmark?: string;
+    message?: string;
 }
 
-export interface PrinterResult {
+export interface NearestPrinterResult {
     buildingId: string;
     found: boolean;
     printer?: {
@@ -25,13 +29,11 @@ export interface PrinterResult {
         supportsA3: boolean;
         note?: string;
     };
-    otherWorkingPrinters: {
-        id: string;
-        name: string;
-        walkingMinutes: number;
-    }[];
+    otherWorkingPrinters: { id: string; name: string; walkingMinutes: number }[];
     message: string;
 }
+
+// ─── Service ──────────────────────────────────────────────────────────────────
 
 @Injectable({ deps: [RoomRepository, EquipmentRepository] })
 export class NavigationService {
@@ -40,32 +42,35 @@ export class NavigationService {
         private readonly equipmentRepo: EquipmentRepository,
     ) {}
 
-    findClassroom(courseId: string): ClassroomResult {
-        const room = this.roomRepo.getRoom(courseId.toUpperCase());
+    async findClassroom(courseId: string): Promise<ClassroomLocationResult> {
+        const room = await this.roomRepo.getRoom(courseId);
+
         if (!room) {
             return {
                 courseId,
-                building: '',
-                buildingName: '',
-                room: '',
-                floor: 0,
-                landmark: '',
                 found: false,
+                message: `Location not found for course ${courseId}.`,
             };
         }
-        return { ...room, found: true };
+
+        return {
+            courseId,
+            found: true,
+            building: room.building,
+            buildingName: room.buildingName,
+            room: room.room,
+            floor: room.floor,
+            landmark: room.landmark,
+        };
     }
 
-    nearestPrinter(buildingId: string): PrinterResult {
-        const working = this.equipmentRepo.getWorkingPrinters();
+    async nearestPrinter(buildingId: string): Promise<NearestPrinterResult> {
+        // Find all working printers in this building
+        const allPrinters = await this.equipmentRepo.getPrintersByBuilding(buildingId);
+        const working = allPrinters.filter(p => p.isWorking);
 
-        // Sort by walking distance — prefer same building first, then by time
-        const sorted = working.slice().sort((a, b) => {
-            const aIsLocal = a.building === buildingId ? 0 : 1;
-            const bIsLocal = b.building === buildingId ? 0 : 1;
-            if (aIsLocal !== bIsLocal) return aIsLocal - bIsLocal;
-            return a.walkingMinutes - b.walkingMinutes;
-        });
+        // Sort by walking distance (slice to avoid mutating repo array)
+        const sorted = working.slice().sort((a, b) => a.walkingMinutes - b.walkingMinutes);
 
         if (sorted.length === 0) {
             return {

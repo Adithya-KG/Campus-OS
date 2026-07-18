@@ -44,13 +44,13 @@ export interface AssignmentResult {
 export class AcademicsService {
     constructor(private readonly studentRepo: StudentRepository) {}
 
-    getTimetable(studentId: string): TimetableResult {
-        const student = this.studentRepo.getStudent(studentId);
+    async getTimetable(studentId: string): Promise<TimetableResult> {
+        const student = await this.studentRepo.getStudent(studentId);
         const now = new Date();
         const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         const todayName = days[now.getDay()];
 
-        const allEntries = this.studentRepo.getTimetable(studentId);
+        const allEntries = await this.studentRepo.getTimetable(studentId);
         // Filter to classes scheduled for today's weekday
         const todayClasses = allEntries
             .filter(e => e.dayOfWeek.includes(todayName))
@@ -65,8 +65,8 @@ export class AcademicsService {
         };
     }
 
-    getAttendance(studentId: string): AttendanceResult {
-        const record = this.studentRepo.getAttendance(studentId);
+    async getAttendance(studentId: string): Promise<AttendanceResult> {
+        const record = await this.studentRepo.getAttendance(studentId);
         if (!record) {
             return {
                 studentId,
@@ -95,11 +95,11 @@ export class AcademicsService {
         };
     }
 
-    getAssignments(studentId: string, dueWithinHours: number = 48): AssignmentResult {
+    async getAssignments(studentId: string, dueWithinHours: number = 48): Promise<AssignmentResult> {
         const now = new Date();
         const cutoff = new Date(now.getTime() + dueWithinHours * 60 * 60 * 1000);
 
-        const raw = this.studentRepo.getAssignments(studentId);
+        const raw = await this.studentRepo.getAssignments(studentId);
         const filtered = raw
             .filter(a => {
                 const dueDateTime = new Date(`${a.dueDate}T${a.dueTime}:00`);

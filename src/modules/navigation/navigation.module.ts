@@ -1,5 +1,5 @@
 import { Module } from '@nitrostack/core';
-import { DataService } from '../../data/data.service.js';
+import { SupabaseService } from '../../data/supabase.service.js';
 import { RoomRepository } from '../../data/room.repository.js';
 import { EquipmentRepository } from '../../data/equipment.repository.js';
 import { NavigationService } from './navigation.service.js';
@@ -10,7 +10,7 @@ import { NavigationResources } from './navigation.resources.js';
     name: 'navigation',
     description: 'Campus navigation — classroom locations and nearest printer finder',
     controllers: [NavigationTools, NavigationResources],
-    providers: [DataService, RoomRepository, EquipmentRepository, NavigationService],
+    providers: [SupabaseService, RoomRepository, EquipmentRepository, NavigationService],
     exports: [NavigationService, RoomRepository, EquipmentRepository],
 })
 export class NavigationModule {}

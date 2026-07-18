@@ -21,7 +21,7 @@ export class AcademicsResources {
     })
     async getAllStudents(ctx: ExecutionContext) {
         ctx.logger.info('Resource: campus://students requested');
-        const students = this.studentRepo.getAllStudents();
+        const students = await this.studentRepo.getAllStudents();
         return {
             total: students.length,
             students,
@@ -43,9 +43,9 @@ export class AcademicsResources {
             return { error: 'Missing studentId in URI', usage: 'campus://students/{studentId}' };
         }
         ctx.logger.info('Resource: campus://students/{studentId}', { studentId });
-        const student = this.studentRepo.getStudent(studentId);
+        const student = await this.studentRepo.getStudent(studentId);
         if (!student) {
-            return { error: `Student '${studentId}' not found`, validIds: this.studentRepo.getAllStudents().map(s => s.id) };
+            return { error: `Student '${studentId}' not found`, validIds: (await this.studentRepo.getAllStudents()).map(s => s.id) };
         }
         return student;
     }

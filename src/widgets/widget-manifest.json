@@ -190,6 +190,30 @@
         }
       ],
       "tags": ["briefing", "plan", "timeline", "campus", "optimisation"]
+    },
+    {
+      "uri": "/document-list",
+      "name": "Document List",
+      "description": "Displays a list of study materials, syllabi, and assignments uploaded by the student.",
+      "examples": [
+        {
+          "name": "Student Documents",
+          "description": "List of student documents",
+          "data": {
+            "studentId": "uuid-1234",
+            "documents": [
+              {
+                "id": "doc-uuid-1",
+                "type": "study_material",
+                "filename": "CS301_Notes.pdf",
+                "status": "processed",
+                "uploadedAt": "2026-07-18T10:00:00Z"
+              }
+            ]
+          }
+        }
+      ],
+      "tags": ["documents", "study", "materials", "campus"]
     }
   ],
   "generatedAt": "2026-07-18T00:00:00.000Z"

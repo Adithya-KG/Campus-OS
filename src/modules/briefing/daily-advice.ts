@@ -1,7 +1,7 @@
 import { TimetableEntry } from '../../data/data.service.js';
 import { AttendanceResult } from '../academics/academics.service.js';
 import { AssignmentResult } from '../academics/academics.service.js';
-import { PrinterResult } from '../navigation/navigation.service.js';
+import { NearestPrinterResult } from '../navigation/navigation.service.js';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -44,7 +44,7 @@ export function computeDailyAdvice(params: {
     classes: TimetableEntry[];
     attendance: AttendanceResult;
     assignments: AssignmentResult;
-    printer: PrinterResult;
+    printer: NearestPrinterResult;
 }): DailyAdviceItem[] {
     const { classes, attendance, assignments, printer } = params;
     const items: DailyAdviceItem[] = [];

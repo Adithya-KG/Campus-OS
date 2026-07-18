@@ -2,6 +2,8 @@ import { McpApp, Module, ConfigModule, OAuthModule } from '@nitrostack/core';
 import { AcademicsModule } from './modules/academics/academics.module.js';
 import { NavigationModule } from './modules/navigation/navigation.module.js';
 import { BriefingModule } from './modules/briefing/briefing.module.js';
+import { DocumentsModule } from './modules/documents/documents.module.js';
+import { AuthModule } from './modules/auth/auth.module.js';
 import { SystemHealthCheck } from './health/system.health.js';
 
 /**
@@ -55,6 +57,8 @@ import { SystemHealthCheck } from './health/system.health.js';
         AcademicsModule,
         NavigationModule,
         BriefingModule,
+        DocumentsModule,
+        AuthModule,
     ],
     providers: [
         // Health Checks

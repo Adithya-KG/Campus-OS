@@ -8,19 +8,17 @@ import { PromptDecorator as Prompt, ExecutionContext, Injectable } from '@nitros
  * reasoning path — it guides the model to call individual tools in sequence
  * and synthesise the result itself, demonstrating the Prompt MCP primitive.
  */
-@Injectable({ deps: [] })
+import { SessionContext } from '../../auth/session.context.js';
+
+@Injectable({ deps: [SessionContext] })
 export class BriefingPrompts {
+    constructor(private readonly sessionContext: SessionContext) {}
 
     @Prompt({
         name: 'prepare-morning-briefing',
         description:
             'Guides the model to sequentially call get_timetable, get_attendance, get_assignments, and nearest_printer for a student, then synthesise a complete, personalised morning briefing from those tool results. Use this prompt when you want the model to reason through the briefing step-by-step rather than using the pre-computed get_morning_briefing tool.',
         arguments: [
-            {
-                name: 'studentId',
-                description: 'The student ID to prepare the briefing for (e.g. "student_001")',
-                required: true,
-            },
             {
                 name: 'buildingId',
                 description: 'The building to check nearest printer for (default: "block_a")',
@@ -29,19 +27,34 @@ export class BriefingPrompts {
         ],
     })
     async prepareMorningBriefing(
-        args: { studentId: string; buildingId?: string },
+        args: { buildingId?: string },
         ctx: ExecutionContext,
     ) {
-        ctx.logger.info('Prompt: prepare-morning-briefing invoked', { studentId: args.studentId });
+        const studentId = this.sessionContext.getAuthenticatedStudentId();
+        if (!studentId) {
+            return {
+                messages: [
+                    {
+                        role: 'user',
+                        content: {
+                            type: 'text',
+                            text: 'Please authenticate first using your email and password.'
+                        }
+                    }
+                ]
+            };
+        }
+        ctx.logger.info('Prompt: prepare-morning-briefing invoked', { studentId });
 
-        const studentId = args.studentId;
         const buildingId = args.buildingId ?? 'block_a';
 
         return {
             messages: [
                 {
                     role: 'user',
-                    content: `You are CampusOS, an AI-native campus assistant. Your task is to prepare a complete, personalised morning briefing for student "${studentId}".
+                    content: {
+                        type: 'text',
+                        text: `You are CampusOS, an AI-native campus assistant. Your task is to prepare a complete, personalised morning briefing for student "${studentId}".
 
 Follow these steps IN ORDER — call each tool and wait for its result before the next:
 
@@ -58,7 +71,8 @@ Once you have all four results, synthesise a briefing that includes:
 - A printer location tip relevant to their first class building
 - 2–3 specific, actionable recommendations for how to best use their time today (gaps between classes, what to prioritise, what to print)
 
-Keep the tone friendly, direct, and practical. Use the tool results exactly — do not invent data.`,
+Keep the tone friendly, direct, and practical. Use the tool results exactly — do not invent data.`
+                    }
                 },
             ],
         };

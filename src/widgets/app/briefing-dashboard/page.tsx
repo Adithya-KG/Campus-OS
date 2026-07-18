@@ -112,13 +112,14 @@ export default function BriefingDashboard() {
     }
 
     // ── Tool hasn't returned data yet (genuine no-data state) ─────────────────
-    if (!data) {
+    if (!data || !data.attendanceWarning) {
+        const errMsg = (data as any)?.error || (data as any)?.message;
         return (
             <div style={{ padding: 24, background: bg, color: text, textAlign: 'center', borderRadius: 12 }}>
                 <div style={{ fontSize: 40, marginBottom: 8 }}>🌅</div>
-                <div style={{ fontWeight: 600 }}>No briefing data</div>
+                <div style={{ fontWeight: 600 }}>{errMsg ? 'Access Blocked' : 'No briefing data'}</div>
                 <div style={{ fontSize: 12, color: muted, marginTop: 6 }}>
-                    Ask the assistant to run get_morning_briefing for your student ID.
+                    {errMsg || 'Ask the assistant to run get_morning_briefing.'}
                 </div>
             </div>
         );

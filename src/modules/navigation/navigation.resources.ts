@@ -23,7 +23,7 @@ export class NavigationResources {
     })
     async getAllRooms(ctx: ExecutionContext) {
         ctx.logger.info('Resource: campus://rooms requested');
-        const rooms = this.roomRepo.getAllRooms();
+        const rooms = await this.roomRepo.getAllRooms();
         return {
             total: rooms.length,
             rooms,
@@ -41,8 +41,8 @@ export class NavigationResources {
     })
     async getAllEquipment(ctx: ExecutionContext) {
         ctx.logger.info('Resource: campus://equipment requested');
-        const all = this.equipmentRepo.getAllPrinters();
-        const working = this.equipmentRepo.getWorkingPrinters();
+        const all = await this.equipmentRepo.getAllPrinters();
+        const working = await this.equipmentRepo.getWorkingPrinters();
         return {
             total: all.length,
             working: working.length,

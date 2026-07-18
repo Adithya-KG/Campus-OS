@@ -1,4 +1,4 @@
-/nitrostudio
+.nitrostudio/
 node_modules/
 **/node_modules/
 

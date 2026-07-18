@@ -1,22 +1,38 @@
 import { Injectable } from '@nitrostack/core';
-import { DataService, Printer } from './data.service.js';
+import { SupabaseService } from './supabase.service.js';
+import { Printer } from './data.service.js';
 
-/**
- * EquipmentRepository — typed wrapper over DataService for printer/equipment data.
- */
-@Injectable({ deps: [DataService] })
+@Injectable({ deps: [SupabaseService] })
 export class EquipmentRepository {
-    constructor(private readonly dataService: DataService) {}
+    constructor(private readonly supabaseService: SupabaseService) {}
 
-    getAllPrinters(): Printer[] {
-        return this.dataService.getPrinters();
+    async getAllPrinters(): Promise<Printer[]> {
+        const { data, error } = await this.supabaseService.getClient()
+            .from('equipment')
+            .select('*');
+
+        if (error || !data) return [];
+        return data.map(d => ({
+            id: d.id,
+            name: d.name,
+            building: d.building,
+            floor: d.floor,
+            room: d.room,
+            isWorking: d.is_working,
+            walkingMinutes: d.walking_minutes,
+            supportsColor: d.supports_color,
+            supportsA3: d.supports_a3,
+            note: d.note,
+        }));
     }
 
-    getWorkingPrinters(): Printer[] {
-        return this.dataService.getPrinters().filter(p => p.isWorking);
+    async getWorkingPrinters(): Promise<Printer[]> {
+        const printers = await this.getAllPrinters();
+        return printers.filter(p => p.isWorking);
     }
 
-    getPrintersByBuilding(buildingId: string): Printer[] {
-        return this.dataService.getPrintersByBuilding(buildingId);
+    async getPrintersByBuilding(buildingId: string): Promise<Printer[]> {
+        const printers = await this.getAllPrinters();
+        return printers.filter(p => p.building === buildingId);
     }
 }

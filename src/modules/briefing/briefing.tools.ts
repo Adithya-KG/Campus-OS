@@ -1,14 +1,16 @@
 import { ToolDecorator as Tool, Widget, ExecutionContext, z, Injectable } from '@nitrostack/core';
+import { SessionContext } from '../../auth/session.context.js';
 import { AcademicsService } from '../academics/academics.service.js';
 import { NavigationService } from '../navigation/navigation.service.js';
 import { computeDailyAdvice, DailyAdviceItem } from './daily-advice.js';
 
 // Note: Using explicit deps for ESM compatibility
-@Injectable({ deps: [AcademicsService, NavigationService] })
+@Injectable({ deps: [AcademicsService, NavigationService, SessionContext] })
 export class BriefingTools {
     constructor(
         private readonly academicsService: AcademicsService,
         private readonly navigationService: NavigationService,
+        private readonly sessionContext: SessionContext,
     ) {}
 
     // ─── get_morning_briefing ────────────────────────────────────────────────
@@ -16,9 +18,7 @@ export class BriefingTools {
     @Tool({
         name: 'get_morning_briefing',
         description: "Generate a personalised morning briefing for a student. Combines today's first class with its room location, an attendance warning if any course is below 75%, assignments due in the next 48 hours, a navigation tip (nearest printer to the first class building), and deterministic daily advice lines.",
-        inputSchema: z.object({
-            studentId: z.string().describe("The student's unique ID (e.g. \"student_001\")"),
-        }),
+        inputSchema: z.object({}),
         examples: {
             request: { studentId: 'student_001' },
             response: {
@@ -74,30 +74,34 @@ export class BriefingTools {
     })
     @Widget('briefing-dashboard')
     async getMorningBriefing(input: any, ctx: ExecutionContext) {
-        ctx.logger.info('Generating morning briefing', { studentId: input.studentId });
+        const studentId = this.sessionContext.getAuthenticatedStudentId();
+        if (!studentId) {
+            throw new Error("Please authenticate first using your email and password.");
+        }
+        ctx.logger.info('Generating morning briefing', { studentId });
 
         // Pull data from injected services — no duplicate data reads
-        const timetable = this.academicsService.getTimetable(input.studentId);
-        const attendance = this.academicsService.getAttendance(input.studentId);
-        const assignments = this.academicsService.getAssignments(input.studentId, 48);
+        const timetable = await this.academicsService.getTimetable(studentId);
+        const attendance = await this.academicsService.getAttendance(studentId);
+        const assignments = await this.academicsService.getAssignments(studentId, 48);
 
         // First class of the day
         const firstClass = timetable.classes[0] ?? null;
 
         // Classroom location for the first class
         const classroomLocation = firstClass
-            ? this.navigationService.findClassroom(firstClass.courseId)
+            ? await this.navigationService.findClassroom(firstClass.courseId)
             : null;
 
         // Nearest printer to the first class building
         const printerBuilding = firstClass?.building ?? 'block_a';
-        const printerInfo = this.navigationService.nearestPrinter(printerBuilding);
+        const printerInfo = await this.navigationService.nearestPrinter(printerBuilding);
 
         // Attendance warning
         const lowCourses = attendance.courses.filter(c => c.isLow);
         const attendanceWarning = {
             hasWarning: attendance.isLow,
-            message: attendance.isLow
+            message: attendance.isLow && lowCourses.length > 0
                 ? `⚠️ Your attendance in ${lowCourses.map(c => c.courseName).join(', ')} is below the 75% minimum.`
                 : '✅ Your attendance is on track for all courses.',
             affectedCourses: lowCourses.map(c => ({
@@ -127,7 +131,7 @@ export class BriefingTools {
 
         return {
             // ── All existing fields unchanged ──────────────────────────────────
-            studentId: input.studentId,
+            studentId: studentId,
             studentName: timetable.studentName,
             generatedAt: new Date().toISOString(),
             firstClass: firstClass
@@ -171,9 +175,7 @@ export class BriefingTools {
     @Tool({
         name: 'get_optimized_day',
         description: "Generate a structured, step-by-step optimised day plan for a student. Returns an ordered timeline of class blocks, study gaps, and action items — with a priority course recommendation, urgent assignments, equipment tips, and actionable daily advice. Use this when the student asks 'what should I focus on today' or 'plan my day'.",
-        inputSchema: z.object({
-            studentId: z.string().describe("The student's unique ID (e.g. \"student_001\")"),
-        }),
+        inputSchema: z.object({}),
         examples: {
             request: { studentId: 'student_001' },
             response: {
@@ -196,14 +198,19 @@ export class BriefingTools {
     })
     @Widget('day-plan')
     async getOptimizedDay(input: any, ctx: ExecutionContext) {
-        ctx.logger.info('Generating optimised day plan', { studentId: input.studentId });
+        const studentId = this.sessionContext.getAuthenticatedStudentId();
+        if (!studentId) {
+            throw new Error("Please authenticate first using your email and password.");
+        }
+        ctx.logger.info('Generating optimised day plan', { studentId });
 
-        const timetable = this.academicsService.getTimetable(input.studentId);
-        const attendance = this.academicsService.getAttendance(input.studentId);
-        const assignments = this.academicsService.getAssignments(input.studentId, 48);
+        const timetable = await this.academicsService.getTimetable(studentId);
+        const attendance = await this.academicsService.getAttendance(studentId);
+        const assignments = await this.academicsService.getAssignments(studentId, 48);
 
-        const printerBuilding = timetable.classes[0]?.building ?? 'block_a';
-        const printerInfo = this.navigationService.nearestPrinter(printerBuilding);
+        const printerInfo = await this.navigationService.nearestPrinter(
+            timetable.classes[0]?.building ?? 'block_a'
+        );
 
         // Build ordered step-by-step plan
         const plan: {
@@ -240,7 +247,7 @@ export class BriefingTools {
             }
 
             // Class block
-            const location = this.navigationService.findClassroom(cls.courseId);
+            const location = await this.navigationService.findClassroom(cls.courseId);
             const locationDetail = location.found
                 ? `Room ${location.room}, ${location.buildingName} Floor ${cls.floor} · ${cls.faculty}`
                 : `Room ${cls.room} · ${cls.faculty}`;
@@ -321,7 +328,7 @@ export class BriefingTools {
         });
 
         return {
-            studentId: input.studentId,
+            studentId: studentId,
             studentName: timetable.studentName,
             date: timetable.date,
             plan,

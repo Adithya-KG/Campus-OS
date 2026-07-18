@@ -1,19 +1,21 @@
 import { ToolDecorator as Tool, Widget, ExecutionContext, z, Injectable } from '@nitrostack/core';
+import { SessionContext } from '../../auth/session.context.js';
 import { AcademicsService } from './academics.service.js';
 
 // Note: Using explicit deps for ESM compatibility
-@Injectable({ deps: [AcademicsService] })
+@Injectable({ deps: [AcademicsService, SessionContext] })
 export class AcademicsTools {
-    constructor(private readonly academicsService: AcademicsService) {}
+    constructor(
+        private readonly academicsService: AcademicsService,
+        private readonly sessionContext: SessionContext
+    ) { }
 
     // ─── get_timetable ──────────────────────────────────────────────────────
 
     @Tool({
         name: 'get_timetable',
         description: "Retrieve a student's class schedule for today. Returns course name, room number, floor, building, start/end time, and faculty for each class scheduled on the current day of the week.",
-        inputSchema: z.object({
-            studentId: z.string().describe("The student's unique ID (e.g. \"student_001\")"),
-        }),
+        inputSchema: z.object({}),
         examples: {
             request: { studentId: 'student_001' },
             response: {
@@ -39,8 +41,12 @@ export class AcademicsTools {
     })
     @Widget('schedule-card')
     async getTimetable(input: any, ctx: ExecutionContext) {
-        ctx.logger.info('Fetching timetable', { studentId: input.studentId });
-        return this.academicsService.getTimetable(input.studentId);
+        const studentId = this.sessionContext.getAuthenticatedStudentId();
+        if (!studentId) {
+            throw new Error("Please authenticate first using your email and password.");
+        }
+        ctx.logger.info('Fetching timetable', { studentId });
+        return this.academicsService.getTimetable(studentId);
     }
 
     // ─── get_attendance ─────────────────────────────────────────────────────
@@ -48,9 +54,7 @@ export class AcademicsTools {
     @Tool({
         name: 'get_attendance',
         description: 'Get attendance percentage per course for a student, their overall attendance, and a boolean isLow flag that is true when any course is below 75% (the minimum required attendance threshold).',
-        inputSchema: z.object({
-            studentId: z.string().describe("The student's unique ID (e.g. \"student_001\")"),
-        }),
+        inputSchema: z.object({}),
         examples: {
             request: { studentId: 'student_001' },
             response: {
@@ -66,8 +70,12 @@ export class AcademicsTools {
     })
     @Widget('attendance-gauge')
     async getAttendance(input: any, ctx: ExecutionContext) {
-        ctx.logger.info('Fetching attendance', { studentId: input.studentId });
-        return this.academicsService.getAttendance(input.studentId);
+        const studentId = this.sessionContext.getAuthenticatedStudentId();
+        if (!studentId) {
+            throw new Error("Please authenticate first using your email and password.");
+        }
+        ctx.logger.info('Fetching attendance', { studentId });
+        return this.academicsService.getAttendance(studentId);
     }
 
     // ─── get_assignments ─────────────────────────────────────────────────────
@@ -76,7 +84,6 @@ export class AcademicsTools {
         name: 'get_assignments',
         description: 'Get a student\'s pending assignments due within a specified number of hours. Defaults to the next 48 hours. Returns sorted by nearest deadline first.',
         inputSchema: z.object({
-            studentId: z.string().describe("The student's unique ID (e.g. \"student_001\")"),
             dueWithinHours: z
                 .number()
                 .min(1)
@@ -106,10 +113,14 @@ export class AcademicsTools {
         },
     })
     async getAssignments(input: any, ctx: ExecutionContext) {
+        const studentId = this.sessionContext.getAuthenticatedStudentId();
+        if (!studentId) {
+            throw new Error("Please authenticate first using your email and password.");
+        }
         ctx.logger.info('Fetching assignments', {
-            studentId: input.studentId,
+            studentId,
             dueWithinHours: input.dueWithinHours,
         });
-        return this.academicsService.getAssignments(input.studentId, input.dueWithinHours ?? 48);
+        return this.academicsService.getAssignments(studentId, input.dueWithinHours ?? 48);
     }
 }

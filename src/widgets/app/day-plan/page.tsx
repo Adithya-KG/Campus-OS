@@ -95,11 +95,15 @@ export default function DayPlan() {
         );
     }
 
-    if (!data) {
+    if (!data || !data.plan) {
+        const errMsg = (data as any)?.error || (data as any)?.message;
         return (
             <div style={{ padding: 24, background: bg, color: text, textAlign: 'center', borderRadius: 12 }}>
                 <div style={{ fontSize: 40, marginBottom: 8 }}>📅</div>
-                <div style={{ fontWeight: 600 }}>No day plan data</div>
+                <div style={{ fontWeight: 600 }}>{errMsg ? 'Access Blocked' : 'No day plan data'}</div>
+                <div style={{ fontSize: 12, color: muted, marginTop: 6 }}>
+                    {errMsg || 'Ask the assistant to run get_optimized_day.'}
+                </div>
             </div>
         );
     }
