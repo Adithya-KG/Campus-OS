@@ -1,0 +1,50 @@
+[
+  {
+    "id": "asgn_001",
+    "studentId": "student_001",
+    "courseId": "CS301",
+    "courseName": "Algorithms & Data Structures",
+    "title": "Implement Dijkstra's Algorithm",
+    "description": "Implement Dijkstra's shortest path algorithm and benchmark it on provided test graphs.",
+    "dueDate": "__TOMORROW__",
+    "dueTime": "23:59",
+    "status": "pending",
+    "weight": "15%"
+  },
+  {
+    "id": "asgn_002",
+    "studentId": "student_001",
+    "courseId": "CS312",
+    "courseName": "Operating Systems",
+    "title": "Process Scheduling Simulation",
+    "description": "Simulate Round-Robin and Priority scheduling algorithms with provided workloads.",
+    "dueDate": "__IN_3_DAYS__",
+    "dueTime": "23:59",
+    "status": "pending",
+    "weight": "20%"
+  },
+  {
+    "id": "asgn_003",
+    "studentId": "student_001",
+    "courseId": "CS320",
+    "courseName": "Software Engineering",
+    "title": "Design Document v2",
+    "description": "Update the SRS and UML diagrams based on mentor feedback.",
+    "dueDate": "__IN_5_DAYS__",
+    "dueTime": "17:00",
+    "status": "pending",
+    "weight": "10%"
+  },
+  {
+    "id": "asgn_004",
+    "studentId": "student_002",
+    "courseId": "EC201",
+    "courseName": "Digital Electronics",
+    "title": "Boolean Algebra Problems Set 3",
+    "description": "Solve all 20 problems from Chapter 4.",
+    "dueDate": "__TOMORROW__",
+    "dueTime": "18:00",
+    "status": "pending",
+    "weight": "5%"
+  }
+]

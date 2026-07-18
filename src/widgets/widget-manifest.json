@@ -1,0 +1,196 @@
+{
+  "version": "1.0.0",
+  "widgets": [
+    {
+      "uri": "/schedule-card",
+      "name": "Class Schedule",
+      "description": "Displays today's class schedule with course names, rooms, timings, and faculty information.",
+      "examples": [
+        {
+          "name": "Student Schedule",
+          "description": "Today's class list for a student",
+          "data": {
+            "studentId": "student_001",
+            "studentName": "Arjun Mehta",
+            "date": "2026-07-17",
+            "dayOfWeek": "Thursday",
+            "classes": [
+              {
+                "courseId": "CS301",
+                "courseName": "Algorithms & Data Structures",
+                "faculty": "Dr. Rajesh Kumar",
+                "room": "A-204",
+                "building": "block_a",
+                "floor": 2,
+                "startTime": "09:00",
+                "endTime": "10:30",
+                "dayOfWeek": ["Monday", "Wednesday", "Friday"]
+              },
+              {
+                "courseId": "CS312",
+                "courseName": "Operating Systems",
+                "faculty": "Prof. Anita Sharma",
+                "room": "A-301",
+                "building": "block_a",
+                "floor": 3,
+                "startTime": "11:00",
+                "endTime": "12:30",
+                "dayOfWeek": ["Monday", "Wednesday", "Friday"]
+              }
+            ]
+          }
+        }
+      ],
+      "tags": ["academics", "schedule", "timetable", "campus"]
+    },
+    {
+      "uri": "/attendance-gauge",
+      "name": "Attendance Gauge",
+      "description": "Visual attendance breakdown per course with colour-coded progress bars (green/amber/red) and isLow flag when below 75%.",
+      "examples": [
+        {
+          "name": "Student Attendance",
+          "description": "Attendance with one low course triggering a warning",
+          "data": {
+            "studentId": "student_001",
+            "overall": 79,
+            "isLow": true,
+            "courses": [
+              {
+                "courseId": "CS301",
+                "courseName": "Algorithms & Data Structures",
+                "attended": 26,
+                "total": 36,
+                "percentage": 72,
+                "isLow": true
+              },
+              {
+                "courseId": "CS312",
+                "courseName": "Operating Systems",
+                "attended": 30,
+                "total": 36,
+                "percentage": 83,
+                "isLow": false
+              },
+              {
+                "courseId": "MA201",
+                "courseName": "Linear Algebra",
+                "attended": 20,
+                "total": 24,
+                "percentage": 83,
+                "isLow": false
+              },
+              {
+                "courseId": "CS320",
+                "courseName": "Software Engineering",
+                "attended": 22,
+                "total": 24,
+                "percentage": 92,
+                "isLow": false
+              }
+            ]
+          }
+        }
+      ],
+      "tags": ["academics", "attendance", "campus"]
+    },
+    {
+      "uri": "/briefing-dashboard",
+      "name": "Morning Briefing",
+      "description": "Personalised morning dashboard showing today's first class, attendance warnings, upcoming assignment deadlines, and a nearest printer navigation tip.",
+      "examples": [
+        {
+          "name": "Student Briefing",
+          "description": "Full morning briefing with attendance warning and assignment due tomorrow",
+          "data": {
+            "studentId": "student_001",
+            "studentName": "Arjun Mehta",
+            "generatedAt": "2026-07-17T04:17:00.000Z",
+            "firstClass": {
+              "courseId": "CS301",
+              "courseName": "Algorithms & Data Structures",
+              "faculty": "Dr. Rajesh Kumar",
+              "startTime": "09:00",
+              "endTime": "10:30",
+              "room": "A-204",
+              "building": "block_a",
+              "floor": 2
+            },
+            "classroomLocation": {
+              "buildingName": "Block A — Sciences & Computing",
+              "room": "A-204",
+              "floor": 2,
+              "landmark": "Near the staircase on the south end"
+            },
+            "attendanceWarning": {
+              "hasWarning": true,
+              "message": "⚠️ Your attendance in Algorithms & Data Structures is below the 75% minimum.",
+              "affectedCourses": [
+                {
+                  "courseId": "CS301",
+                  "courseName": "Algorithms & Data Structures",
+                  "percentage": 72
+                }
+              ]
+            },
+            "assignmentsDueSoon": [
+              {
+                "title": "Implement Dijkstra's Algorithm",
+                "courseId": "CS301",
+                "courseName": "Algorithms & Data Structures",
+                "dueDate": "2026-07-18",
+                "dueTime": "23:59",
+                "hoursUntilDue": 26,
+                "weight": "15%"
+              }
+            ],
+            "navigationTip": {
+              "message": "Nearest printer is Block A — 2F Print Station (right around the corner). Room A-210.",
+              "printerName": "Block A — 2F Print Station",
+              "room": "A-210",
+              "walkingMinutes": 2
+            }
+          }
+        }
+      ],
+      "tags": ["briefing", "dashboard", "campus", "morning"]
+    },
+    {
+      "uri": "/day-plan",
+      "name": "Optimised Day Plan",
+      "description": "Step-by-step timeline of a student's optimised day: class blocks, study gaps, action items, urgent deadlines, and daily advice. Use after calling get_optimized_day.",
+      "examples": [
+        {
+          "name": "Day Plan",
+          "description": "Student's optimised day with timeline and advice",
+          "data": {
+            "studentName": "Arjun Mehta",
+            "date": "2026-07-18",
+            "plan": [
+              { "step": 1, "time": "09:00", "type": "class", "label": "Algorithms & Data Structures", "detail": "Room A-204, Block A — Sciences & Computing Floor 2 · Dr. Rajesh Kumar" },
+              { "step": 2, "time": "10:30", "type": "gap", "label": "90-min Study Window", "detail": "Work on \"Implement Dijkstra's Algorithm\" (due in 26h)" },
+              { "step": 3, "time": "12:00", "type": "class", "label": "Operating Systems", "detail": "Room A-301, Block A — Sciences & Computing Floor 3 · Prof. Anita Sharma" },
+              { "step": 4, "time": "13:30", "type": "action", "label": "Print assignment materials", "detail": "Block A — 2F Print Station — Room A-210 (~2 min walk, colour supported)" },
+              { "step": 5, "time": "23:59", "type": "urgent", "label": "🔴 DEADLINE: Implement Dijkstra's Algorithm", "detail": "Due 23:59 tonight · Algorithms & Data Structures · 15%" }
+            ],
+            "priorityCourse": {
+              "courseId": "CS301",
+              "courseName": "Algorithms & Data Structures",
+              "reason": "Attendance at 72% — below the 75% minimum"
+            },
+            "urgentAssignments": [
+              { "title": "Implement Dijkstra's Algorithm", "courseId": "CS301", "courseName": "Algorithms & Data Structures", "dueDate": "2026-07-18", "dueTime": "23:59", "hoursUntilDue": 26, "weight": "15%" }
+            ],
+            "dailyAdvice": [
+              { "type": "prioritize", "priority": "high", "message": "📚 Prioritise attending Algorithms & Data Structures — you need 1 more class to avoid the attendance penalty." },
+              { "type": "assignment_urgency", "priority": "high", "message": "🔴 URGENT: \"Implement Dijkstra's Algorithm\" is due in 26h. Prioritise this above everything else today." },
+              { "type": "equipment", "priority": "low", "message": "🖨️ Block A — 2F Print Station is only ~2 min away (Room A-210), supports colour printing." }
+            ]
+          }
+        }
+      ],
+      "tags": ["briefing", "plan", "timeline", "campus", "optimisation"]
+    }
+  ],
+  "generatedAt": "2026-07-18T00:00:00.000Z"
+}

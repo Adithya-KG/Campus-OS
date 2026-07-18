@@ -1,0 +1,61 @@
+{
+  "student_001": [
+    {
+      "courseId": "CS301",
+      "courseName": "Algorithms & Data Structures",
+      "faculty": "Dr. Rajesh Kumar",
+      "room": "A-204",
+      "building": "block_a",
+      "floor": 2,
+      "startTime": "09:00",
+      "endTime": "10:30",
+      "dayOfWeek": ["Monday", "Wednesday", "Friday"]
+    },
+    {
+      "courseId": "CS312",
+      "courseName": "Operating Systems",
+      "faculty": "Prof. Anita Sharma",
+      "room": "A-301",
+      "building": "block_a",
+      "floor": 3,
+      "startTime": "11:00",
+      "endTime": "12:30",
+      "dayOfWeek": ["Monday", "Wednesday", "Friday"]
+    },
+    {
+      "courseId": "MA201",
+      "courseName": "Linear Algebra",
+      "faculty": "Dr. Sunita Patel",
+      "room": "B-101",
+      "building": "block_b",
+      "floor": 1,
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "dayOfWeek": ["Tuesday", "Thursday"]
+    },
+    {
+      "courseId": "CS320",
+      "courseName": "Software Engineering",
+      "faculty": "Prof. Vikram Rao",
+      "room": "A-205",
+      "building": "block_a",
+      "floor": 2,
+      "startTime": "15:30",
+      "endTime": "17:00",
+      "dayOfWeek": ["Tuesday", "Thursday"]
+    }
+  ],
+  "student_002": [
+    {
+      "courseId": "EC201",
+      "courseName": "Digital Electronics",
+      "faculty": "Dr. Meera Krishnan",
+      "room": "B-202",
+      "building": "block_b",
+      "floor": 2,
+      "startTime": "09:00",
+      "endTime": "10:30",
+      "dayOfWeek": ["Monday", "Wednesday", "Friday"]
+    }
+  ]
+}

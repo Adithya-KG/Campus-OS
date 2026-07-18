@@ -1,0 +1,59 @@
+[
+  {
+    "id": "printer_block_a_1",
+    "name": "Block A — 2F Print Station",
+    "building": "block_a",
+    "floor": 2,
+    "room": "A-210",
+    "isWorking": true,
+    "walkingMinutes": 2,
+    "supportsColor": true,
+    "supportsA3": false
+  },
+  {
+    "id": "printer_library_1",
+    "name": "Library — 1F Print Centre",
+    "building": "library",
+    "floor": 1,
+    "room": "Lib-G01",
+    "isWorking": true,
+    "walkingMinutes": 3,
+    "supportsColor": true,
+    "supportsA3": true,
+    "note": "~3 min walk from Block A main entrance"
+  },
+  {
+    "id": "printer_block_a_2",
+    "name": "Block A — 3F Print Station",
+    "building": "block_a",
+    "floor": 3,
+    "room": "A-310",
+    "isWorking": false,
+    "walkingMinutes": 3,
+    "supportsColor": false,
+    "supportsA3": false,
+    "note": "Out of service — paper jam"
+  },
+  {
+    "id": "printer_block_b_1",
+    "name": "Block B — 1F Print Station",
+    "building": "block_b",
+    "floor": 1,
+    "room": "B-G05",
+    "isWorking": true,
+    "walkingMinutes": 5,
+    "supportsColor": false,
+    "supportsA3": false
+  },
+  {
+    "id": "printer_canteen_1",
+    "name": "Student Centre — Print Kiosk",
+    "building": "student_centre",
+    "floor": 1,
+    "room": "SC-01",
+    "isWorking": true,
+    "walkingMinutes": 7,
+    "supportsColor": true,
+    "supportsA3": true
+  }
+]

@@ -1,0 +1,47 @@
+{
+  "student_001": {
+    "overall": 79,
+    "courses": [
+      {
+        "courseId": "CS301",
+        "courseName": "Algorithms & Data Structures",
+        "attended": 26,
+        "total": 36,
+        "percentage": 72
+      },
+      {
+        "courseId": "CS312",
+        "courseName": "Operating Systems",
+        "attended": 30,
+        "total": 36,
+        "percentage": 83
+      },
+      {
+        "courseId": "MA201",
+        "courseName": "Linear Algebra",
+        "attended": 20,
+        "total": 24,
+        "percentage": 83
+      },
+      {
+        "courseId": "CS320",
+        "courseName": "Software Engineering",
+        "attended": 22,
+        "total": 24,
+        "percentage": 92
+      }
+    ]
+  },
+  "student_002": {
+    "overall": 91,
+    "courses": [
+      {
+        "courseId": "EC201",
+        "courseName": "Digital Electronics",
+        "attended": 32,
+        "total": 35,
+        "percentage": 91
+      }
+    ]
+  }
+}
